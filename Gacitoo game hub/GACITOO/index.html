@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GACITOOO GAME PORTAL</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #050910 0%, #2a5298 100%);
+        color: #f3f4f6;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .container {
+        text-align: center;
+      }
+      h1 {
+        font-size: 3rem;
+        margin-bottom: 20px;
+      }
+      .button {
+        display: inline-block;
+        margin-top: 25px;
+        color: #ffffff;
+        text-decoration: underline;
+        border: 1px solid #ffffff;
+        padding: 12px 22px;
+        border-radius: 999px;
+      }
+      .button:hover {
+        background: rgba(255, 255, 255, 0.15);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Welcome to GACITOOO GAME PORTAL</h1>
+      <a href="/home" class="button">Enter the Portal</a>
+    </div>
+    <div class="content"></div>
+    <div class="form-container"></div>
+    <dialog id="gameDialog">
+      <div class="dialog-content">
+        <h2>Game Title</h2>
+        <p>Game description goes here.</p>
+        <button id="closeDialog">Close</button>
+      </div>
+    </dialog>
+    <div>
+      <style>
+        .content {
+          max-width: 900px;
+          background: rgba(255, 255, 255, 0.12);
+          border: 1px solid rgba(255, 255, 255, 0.22);
+          border-radius: 22px;
+          padding: 30px;
+          box-shadow: 0 18px 45px rgba(0, 0, 0, 0.2);
+        }
+        .form-container {
+          margin-top: 30px;
+        }
+        .field {
+          margin-bottom: 15px;
+        }
+        .field label {
+          display: block;
+          margin-bottom: 5px;
+        }
+        .field input {
+          width: 100%;
+          padding: 10px;
+          border-radius: 8px;
+          border: none;
+        }
+      </style>
+    </div>
+    <script>
+      const dialog = document.getElementById("gameDialog");
+      const closeDialogButton = document.getElementById("closeDialog");
+
+      closeDialogButton.addEventListener("click", () => {
+        dialog.close();
+      });
+    </script>
+    <div>
+      <style>
+        #gameDialog {
+          border: none;
+          border-radius: 12px;
+          padding: 20px;
+          background: rgba(255, 255, 255, 0.15);
+          box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        }
+        .dialog-content {
+          text-align: center;
+        }
+        .dialog-content h2 {
+          margin-top: 0;
+        }
+        .dialog-content button {
+          margin-top: 20px;
+          padding: 10px 20px;
+          background: #ffffff;
+          color: #333;
+          border-radius: 999px;
+          border: none;
+          cursor: pointer;
+        }
+        .dialog-content button:hover {
+          background: rgba(255, 255, 255, 0.8);
+        }
+      </style>
+    </div>
+    <details>
+      <summary>Game List</summary>
+      <ul>
+        <li>
+          <a
+            href="#"
+            class="game-link"
+            data-title="Game 1"
+            data-description="Description for Game 1"
+            >Game 1</a
+          >
+        </li>
+        <li>
+          <a
+            href="#"
+            class="game-link"
+            data-title="Game 2"
+            data-description="Description for Game 2"
+            >Game 2</a
+          >
+        </li>
+        <li>
+          <a
+            href="#"
+            class="game-link"
+            data-title="Game 3"
+            data-description="Description for Game 3"
+            >Game 3</a
+          >
+        </li>
+      </ul>
+      <script>
+        const gameLinks = document.querySelectorAll(".game-link");
+        gameLinks.forEach((link) => {
+          link.addEventListener("click", (e) => {
+            e.preventDefault();
+            const title = link.getAttribute("data-title");
+            const description = link.getAttribute("data-description");
+            document.querySelector(".dialog-content h2").textContent = title;
+            document.querySelector(".dialog-content p").textContent =
+              description;
+            dialog.showModal();
+          });
+        });
+      </script>
+      `
+    </details>
+  <bdo dir="rtl">
+    <style>
+      body {
+        direction: rtl;
+      }
+    </style>
+  </bdo>
+    <button onclick="document.body.style.direction = 'rtl'">RTL</button>
+    <button onclick="document.body.style.direction = 'ltr'">LTR</button>
+    <blockquote>
+      <p>This is a blockquote example. It will be displayed in the current text direction.</p>  
+    </blockquote>
+    <base href="/" />
+     <link rel="stylesheet" href="styles.css" />
+    <script src="script.js"></script>
+    <bdi>
+      <style>
+        .bdi-example {
+          display: inline-block;
+          padding: 10px;
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 8px;
+        }
+      </style>
+      <div class="bdi-example">
+        This text is wrapped in a BDI element. It will be displayed correctly regardless of the surrounding text direction.
+      </div>
+    </bdi>
+     <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <meta name="description" content="GACITOOO GAME PORTAL - Your gateway to exciting games and fun experiences." />
+    <br />
+    <hr />
+     <meta name="keywords" content="GACITOOO, game portal, online games, fun, entertainment" />
+     <meta name="author" content="Your Name" />
+
+    <br />
+    <hr />
+     <meta name="robots" content="index, follow" />
+     <base target="_blank" />
+     <link rel="canonical" href="https://www.gacitooo.com/" />
+     <div>
+         <style>
+            .content {
+              max-width: 900px;
+              background: rgba(255, 255, 255, 0.12);
+              border: 1px solid rgba(255, 255, 255, 0.22);
+              border-radius: 22px;
+              padding: 30px;
+              box-shadow: 0 18px 45px rgba(0, 0, 0, 0.2);
+            }
+         </style>
+         <fencedframe src="https://www.example.com" width="600" height="400" title="Example Fenced Frame"></fencedframe>
+     </div>
+    <section class="search-section" aria-label="Search">
+      <style>
+        .search-container {
+          margin-top: 30px;
+          text-align: center;
+        }
+        .search-container input {
+          width: 300px;
+          padding: 10px;
+          border-radius: 8px;
+          border: none;
+        }
+        .search-container button {
+          padding: 10px 20px;
+          background: #ffffff;
+          color: #333;
+          border-radius: 999px;
+          border: none;
+          cursor: pointer;
+        }
+        .search-container button:hover {
+          background: rgba(255, 255, 255, 0.8);
+        }
+      </style>
+      <div class="search-container">
+        <input type="text" placeholder="Search games..." />
+        <button>Search</button>
+        <slot name="search-results"></slot>
+      </div>
+    </section>
+  </body>
+</html>
+

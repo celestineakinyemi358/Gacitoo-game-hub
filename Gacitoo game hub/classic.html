@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Classic Game - GACITOO</title>
+    <style>
+      :root {
+        --bg: #08101f;
+        --panel: rgba(10, 20, 34, 0.94);
+        --accent: #38bdf8;
+        --text: #f8fafc;
+        --danger: #f97316;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: linear-gradient(180deg, #070b13 0%, #0a1225 100%);
+        color: var(--text);
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 1.5rem;
+      }
+
+      .container {
+        width: min(100%, 720px);
+        background: var(--panel);
+        border: 1px solid rgba(56, 189, 248, 0.18);
+        border-radius: 1.5rem;
+        padding: 1.75rem;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+      }
+
+      h1 {
+        margin: 0 0 0.5rem;
+        font-size: clamp(2rem, 3vw, 3rem);
+      }
+
+      p {
+        margin: 0 0 1.5rem;
+        color: #cbd5e1;
+        line-height: 1.7;
+      }
+
+      .top-row {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .btn {
+        border: none;
+        border-radius: 0.9rem;
+        padding: 0.9rem 1.4rem;
+        font-weight: 700;
+        cursor: pointer;
+        color: #000;
+        background: linear-gradient(135deg, var(--accent), #7dd3fc);
+        transition: transform 0.2s ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+        margin: 1.5rem 0;
+      }
+
+      .stat-card {
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(56, 189, 248, 0.14);
+        border-radius: 1rem;
+        padding: 1rem;
+        text-align: center;
+      }
+
+      .stat-card span {
+        display: block;
+        color: #94a3b8;
+        margin-bottom: 0.35rem;
+      }
+
+      .stat-card strong {
+        font-size: 1.4rem;
+      }
+
+      .game-board {
+        position: relative;
+        width: 100%;
+        height: 500px;
+        margin: 0 auto;
+        border-radius: 1.5rem;
+        background: linear-gradient(180deg, #0b1525 0%, #132038 100%);
+        overflow: hidden;
+        border: 3px solid rgba(56, 189, 248, 0.18);
+      }
+
+      .player,
+      .obstacle,
+      .coin {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        user-select: none;
+      }
+
+      .player {
+        width: 48px;
+        height: 48px;
+        background: #7dd3fc;
+        border-radius: 0.9rem;
+        font-size: 1.5rem;
+        color: #0f172a;
+      }
+
+      .obstacle {
+        width: 50px;
+        height: 50px;
+        background: #fb7185;
+        border-radius: 0.8rem;
+        font-size: 1.25rem;
+      }
+
+      .coin {
+        width: 32px;
+        height: 32px;
+        background: #facc15;
+        border-radius: 50%;
+        font-size: 1rem;
+      }
+
+      .hud {
+        display: flex;
+        gap: 1rem;
+        margin: 1.5rem 0;
+        flex-wrap: wrap;
+      }
+
+      .hud-item {
+        flex: 1;
+        min-width: 120px;
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(56, 189, 248, 0.14);
+        border-radius: 1rem;
+        padding: 1rem;
+        text-align: center;
+      }
+
+      .hud-item small {
+        display: block;
+        color: #94a3b8;
+        margin-bottom: 0.35rem;
+      }
+
+      .hud-item strong {
+        display: block;
+        font-size: 1.5rem;
+      }
+
+      .message {
+        display: block;
+        background: rgba(15, 23, 42, 0.95);
+        border: 1px solid rgba(56, 189, 248, 0.18);
+        border-radius: 1.25rem;
+        padding: 1.3rem;
+        margin-top: 1.5rem;
+        text-align: center;
+      }
+
+      .message h2 {
+        margin-bottom: 0.75rem;
+        color: var(--accent);
+      }
+
+      .instructions {
+        margin-top: 1rem;
+        color: #94a3b8;
+      }
+
+      @media (max-width: 720px) {
+        .stats {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="top-row">
+        <div>
+          <h1>Classic Game</h1>
+          <p>
+            Retro arcade dodge challenge. Move left and right, avoid falling
+            hazards, and survive as long as possible.
+          </p>
+        </div>
+        <button class="btn" onclick="goHome()">Back to Launcher</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat-card">
+          <span>Score</span>
+          <strong id="score">0</strong>
+        </div>
+        <div class="stat-card">
+          <span>Coins</span>
+          <strong id="coins">0</strong>
+        </div>
+        <div class="stat-card">
+          <span>Time</span>
+          <strong id="time">0s</strong>
+        </div>
+      </div>
+
+      <div class="game-board" id="gameBoard">
+        <div class="player" id="player">▶</div>
+      </div>
+
+      <div class="hud">
+        <div class="hud-item">
+          <small>High Score</small>
+          <strong id="highScore">0</strong>
+        </div>
+        <div class="hud-item">
+          <small>Status</small>
+          <strong id="status">Ready</strong>
+        </div>
+      </div>
+
+      <div class="message" id="messageBox">
+        <h2>Press Space to Start</h2>
+        <p class="instructions">
+          Arrow keys to move. Avoid obstacles and collect coins to reach a
+          classic high score.
+        </p>
+      </div>
+    </div>
+
+    <script>
+      const board = document.getElementById("gameBoard");
+      const player = document.getElementById("player");
+      const scoreEl = document.getElementById("score");
+      const coinsEl = document.getElementById("coins");
+      const timeEl = document.getElementById("time");
+      const highScoreEl = document.getElementById("highScore");
+      const statusEl = document.getElementById("status");
+      const messageBox = document.getElementById("messageBox");
+
+      let playerX = 0;
+      let playerY = 0;
+      let score = 0;
+      let coins = 0;
+      let elapsed = 0;
+      let isRunning = false;
+      let lastTime = 0;
+      let obstacles = [];
+      let keyState = {};
+      let highScore = localStorage.getItem("classicHighScore") || 0;
+      highScoreEl.textContent = highScore;
+
+      const settings = {
+        playerSpeed: 360,
+        spawnRate: 0.02,
+        countSpeed: 0.01,
+      };
+
+      function resetGame() {
+        score = 0;
+        coins = 0;
+        elapsed = 0;
+        obstacles.forEach((obj) => obj.element.remove());
+        obstacles = [];
+        playerX = (board.clientWidth - 48) / 2;
+        playerY = board.clientHeight - 72;
+        updatePlayer();
+        scoreEl.textContent = score;
+        coinsEl.textContent = coins;
+        statusEl.textContent = "Playing";
+        messageBox.style.display = "none";
+      }
+
+      function startGame() {
+        if (isRunning) return;
+        isRunning = true;
+        lastTime = performance.now();
+        resetGame();
+        requestAnimationFrame(gameLoop);
+      }
+
+      function endGame() {
+        isRunning = false;
+        statusEl.textContent = "Game Over";
+        messageBox.style.display = "block";
+        messageBox.innerHTML = `<h2>Game Over</h2><p class="instructions">Your score: ${score}. Press Space to try again.</p>`;
+        if (score > highScore) {
+          highScore = score;
+          localStorage.setItem("classicHighScore", highScore);
+          highScoreEl.textContent = highScore;
+        }
+      }
+
+      function createObstacle(type) {
+        const element = document.createElement("div");
+        element.className = type;
+        element.style.left = Math.random() * (board.clientWidth - 50) + "px";
+        element.style.top = "-60px";
+        element.style.zIndex = 5;
+        element.textContent = type === "coin" ? "💰" : "⚠";
+        board.appendChild(element);
+
+        obstacles.push({
+          type,
+          x: parseFloat(element.style.left),
+          y: -60,
+          speed: type === "coin" ? 180 : 220,
+          element,
+          size: type === "coin" ? 32 : 50,
+        });
+      }
+
+      function updatePlayer() {
+        player.style.left = `${playerX}px`;
+        player.style.top = `${playerY}px`;
+      }
+
+      function gameLoop(timestamp) {
+        if (!isRunning) return;
+
+        const delta = timestamp - lastTime;
+        lastTime = timestamp;
+        elapsed += delta;
+        score += delta * settings.countSpeed;
+        scoreEl.textContent = Math.floor(score);
+        timeEl.textContent = `${Math.floor(elapsed / 1000)}s`;
+
+        if (Math.random() < settings.spawnRate) {
+          createObstacle(Math.random() < 0.25 ? "coin" : "obstacle");
+        }
+
+        const speed = (settings.playerSpeed * delta) / 1000;
+        if (keyState.ArrowLeft) playerX -= speed;
+        if (keyState.ArrowRight) playerX += speed;
+
+        playerX = Math.max(0, Math.min(playerX, board.clientWidth - 48));
+        updatePlayer();
+
+        obstacles = obstacles.filter((obj) => {
+          obj.y += (obj.speed * delta) / 1000;
+          obj.element.style.top = `${obj.y}px`;
+          if (obj.y > board.clientHeight + 80) {
+            obj.element.remove();
+            return false;
+          }
+          return true;
+        });
+
+        const playerRect = player.getBoundingClientRect();
+        const boardRect = board.getBoundingClientRect();
+
+        for (const item of [...obstacles]) {
+          const rect = item.element.getBoundingClientRect();
+          if (
+            rect.left < playerRect.right &&
+            rect.right > playerRect.left &&
+            rect.top < playerRect.bottom &&
+            rect.bottom > playerRect.top
+          ) {
+            if (item.type === "obstacle") {
+              endGame();
+              return;
+            }
+            coins += 1;
+            score += 50;
+            coinsEl.textContent = coins;
+            item.element.remove();
+            obstacles = obstacles.filter((other) => other !== item);
+          }
+        }
+
+        requestAnimationFrame(gameLoop);
+      }
+
+      window.addEventListener("keydown", (event) => {
+        keyState[event.key] = true;
+        if (event.key === " " && !isRunning) {
+          startGame();
+        }
+      });
+
+      window.addEventListener("keyup", (event) => {
+        keyState[event.key] = false;
+      });
+
+      window.addEventListener("resize", () => {
+        playerY = board.clientHeight - 72;
+        playerX = Math.max(0, Math.min(playerX, board.clientWidth - 48));
+        updatePlayer();
+      });
+
+      function goHome() {
+        window.location.href = "../index.html";
+      }
+
+      resetGame();
+    </script>
+  </body>
+</html>

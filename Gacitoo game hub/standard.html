@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Standard Game - GACITOO</title>
+    <style>
+      :root {
+        --bg: #07121f;
+        --panel: rgba(7, 18, 31, 0.96);
+        --accent: #8b5cf6;
+        --text: #e2e8f0;
+        --success: #34d399;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: radial-gradient(circle at top, #0f172a 0%, #07101d 65%);
+        color: var(--text);
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+      }
+
+      .container {
+        width: min(100%, 760px);
+        border-radius: 1.5rem;
+        background: var(--panel);
+        padding: 1.75rem;
+        border: 1px solid rgba(139, 92, 246, 0.18);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+      }
+
+      .top-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2rem, 3vw, 3rem);
+      }
+
+      p {
+        margin: 0.75rem 0 1.25rem;
+        color: #94a3b8;
+      }
+
+      .btn {
+        border: none;
+        border-radius: 0.9rem;
+        padding: 0.9rem 1.4rem;
+        font-weight: 700;
+        cursor: pointer;
+        background: linear-gradient(135deg, var(--accent), #c4b5fd);
+        color: #000;
+        transition: transform 0.2s ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .info-card {
+        background: rgba(15, 23, 42, 0.95);
+        padding: 1rem;
+        border-radius: 1rem;
+        border: 1px solid rgba(139, 92, 246, 0.12);
+        text-align: center;
+      }
+
+      .info-card small {
+        display: block;
+        color: #94a3b8;
+        margin-bottom: 0.4rem;
+      }
+
+      .board {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.75rem;
+        background: #0b1728;
+        padding: 0.75rem;
+        border-radius: 1.5rem;
+      }
+
+      .cell {
+        aspect-ratio: 1 / 1;
+        border-radius: 1rem;
+        background: rgba(255, 255, 255, 0.04);
+        display: grid;
+        place-items: center;
+        font-size: 1.2rem;
+        color: #94a3b8;
+      }
+
+      .cell.player {
+        background: linear-gradient(135deg, #a78bfa, #c4b5fd);
+        color: #0f172a;
+      }
+
+      .cell.coin {
+        background: linear-gradient(135deg, #34d399, #86efac);
+        color: #0f172a;
+      }
+
+      .cell.obstacle {
+        background: linear-gradient(135deg, #fb7185, #fda4af);
+        color: #0f172a;
+      }
+
+      .message {
+        margin-top: 1.5rem;
+        padding: 1.2rem;
+        background: rgba(15, 23, 42, 0.95);
+        border-radius: 1.25rem;
+        border: 1px solid rgba(139, 92, 246, 0.18);
+      }
+
+      .message h2 {
+        margin: 0 0 0.5rem;
+        color: var(--accent);
+      }
+
+      @media (max-width: 720px) {
+        .info-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="top-row">
+        <div>
+          <h1>Standard Game</h1>
+          <p>
+            Move the player through the board, collect coins, and avoid
+            obstacles.
+          </p>
+        </div>
+        <button class="btn" onclick="goHome()">Back to Launcher</button>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <small>Score</small>
+          <strong id="score">0</strong>
+        </div>
+        <div class="info-card">
+          <small>Coins</small>
+          <strong id="coins">0</strong>
+        </div>
+        <div class="info-card">
+          <small>Status</small>
+          <strong id="status">Ready</strong>
+        </div>
+      </div>
+
+      <div class="board" id="board"></div>
+
+      <div class="message" id="messageBox">
+        <h2>Classic Standard Challenge</h2>
+        <p>
+          Use arrow keys to move. Collect all the coins while avoiding red
+          obstacles. Press Space to begin.
+        </p>
+      </div>
+    </div>
+
+    <script>
+      const board = document.getElementById("board");
+      const scoreEl = document.getElementById("score");
+      const coinsEl = document.getElementById("coins");
+      const statusEl = document.getElementById("status");
+      const messageBox = document.getElementById("messageBox");
+
+      const rows = 5;
+      const cols = 5;
+      const cells = [];
+      let playerIndex = 22;
+      let score = 0;
+      let coins = 0;
+      let activeCoins = 0;
+      let gameActive = false;
+      let keyState = {};
+      let coinPositions = [];
+      let obstaclePositions = [];
+
+      function createBoard() {
+        board.innerHTML = "";
+        for (let i = 0; i < rows * cols; i++) {
+          const cell = document.createElement("div");
+          cell.className = "cell";
+          board.appendChild(cell);
+          cells[i] = cell;
+        }
+      }
+
+      function placeItems() {
+        coinPositions = [];
+        obstaclePositions = [];
+
+        const taken = new Set([playerIndex]);
+        for (let i = 0; i < 6; i++) {
+          let index;
+          do {
+            index = Math.floor(Math.random() * rows * cols);
+          } while (taken.has(index));
+          taken.add(index);
+          coinPositions.push(index);
+        }
+
+        for (let i = 0; i < 5; i++) {
+          let index;
+          do {
+            index = Math.floor(Math.random() * rows * cols);
+          } while (taken.has(index));
+          taken.add(index);
+          obstaclePositions.push(index);
+        }
+      }
+
+      function renderBoard() {
+        cells.forEach((cell, index) => {
+          cell.className = "cell";
+          cell.textContent = "";
+          if (index === playerIndex) {
+            cell.classList.add("player");
+            cell.textContent = "🙂";
+          } else if (coinPositions.includes(index)) {
+            cell.classList.add("coin");
+            cell.textContent = "💰";
+          } else if (obstaclePositions.includes(index)) {
+            cell.classList.add("obstacle");
+            cell.textContent = "⚠";
+          }
+        });
+      }
+
+      function resetGame() {
+        score = 0;
+        coins = 0;
+        activeCoins = 6;
+        playerIndex = rows * cols - 3;
+        createBoard();
+        placeItems();
+        renderBoard();
+        updateHUD("Playing");
+        gameActive = true;
+        messageBox.style.display = "none";
+      }
+
+      function updateHUD(state) {
+        scoreEl.textContent = score;
+        coinsEl.textContent = coins;
+        statusEl.textContent = state;
+      }
+
+      function movePlayer(direction) {
+        if (!gameActive) return;
+        const row = Math.floor(playerIndex / cols);
+        const col = playerIndex % cols;
+        let next = playerIndex;
+
+        if (direction === "left" && col > 0) next -= 1;
+        if (direction === "right" && col < cols - 1) next += 1;
+        if (direction === "up" && row > 0) next -= cols;
+        if (direction === "down" && row < rows - 1) next += cols;
+
+        if (next !== playerIndex) {
+          playerIndex = next;
+          score += 10;
+          if (coinPositions.includes(playerIndex)) {
+            coins += 1;
+            score += 40;
+            activeCoins -= 1;
+            coinPositions = coinPositions.filter((pos) => pos !== playerIndex);
+          }
+          if (obstaclePositions.includes(playerIndex)) {
+            endGame("Lost");
+            return;
+          }
+          renderBoard();
+          updateHUD("Playing");
+          if (activeCoins === 0) {
+            endGame("Won");
+          }
+        }
+      }
+
+      function endGame(result) {
+        gameActive = false;
+        statusEl.textContent = result === "Won" ? "Victory" : "Game Over";
+        messageBox.style.display = "block";
+        messageBox.innerHTML = `
+          <h2>${result === "Won" ? "You Win!" : "Game Over"}</h2>
+          <p>Score: ${score}, Coins: ${coins}. Press Space to play again.</p>
+        `;
+      }
+
+      window.addEventListener("keydown", (event) => {
+        if (event.key === " " && !gameActive) {
+          resetGame();
+          return;
+        }
+        if (
+          ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(
+            event.key,
+          )
+        ) {
+          event.preventDefault();
+          if (event.key === "ArrowLeft") movePlayer("left");
+          if (event.key === "ArrowRight") movePlayer("right");
+          if (event.key === "ArrowUp") movePlayer("up");
+          if (event.key === "ArrowDown") movePlayer("down");
+        }
+      });
+
+      function goHome() {
+        window.location.href = "../index.html";
+      }
+
+      createBoard();
+      placeItems();
+      renderBoard();
+    </script>
+  </body>
+</html>

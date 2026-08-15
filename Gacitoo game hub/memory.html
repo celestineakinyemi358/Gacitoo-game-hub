@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Memory Match - GameVerse</title>
+    <style>
+      :root {
+        --accent: #38bdf8;
+        --text: #e2e8f0;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: linear-gradient(
+          180deg,
+          #1a1a2e 0%,
+          #16213e 50%,
+          #0f3460 100%
+        );
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--text);
+        padding: 1rem;
+      }
+
+      .container {
+        text-align: center;
+        max-width: 800px;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: #38bdf8;
+      }
+
+      .stats {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .stat {
+        background: rgba(30, 41, 59, 0.8);
+        padding: 1rem;
+        border-radius: 0.8rem;
+        border-left: 4px solid var(--accent);
+        min-width: 120px;
+      }
+
+      .stat div:first-child {
+        font-size: 0.9rem;
+        color: #94a3b8;
+      }
+
+      .stat div:last-child {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--accent);
+      }
+
+      .difficulty-selector {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        padding: 0.7rem 1.2rem;
+        border: 2px solid var(--accent);
+        border-radius: 0.6rem;
+        background: rgba(30, 41, 59, 0.8);
+        color: var(--text);
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+      }
+
+      .btn:hover,
+      .btn.active {
+        background: linear-gradient(135deg, var(--accent), #0ea5e9);
+        color: #000;
+        transform: scale(1.05);
+      }
+
+      .game-board {
+        display: grid;
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .board-4 {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .board-6 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .board-8 {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .card {
+        width: 100%;
+        aspect-ratio: 1;
+        background: linear-gradient(
+          135deg,
+          rgba(56, 189, 248, 0.3),
+          rgba(59, 130, 246, 0.2)
+        );
+        border: 2px solid var(--accent);
+        border-radius: 0.8rem;
+        cursor: pointer;
+        font-size: 2.5rem;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        transform-style: preserve-3d;
+        position: relative;
+      }
+
+      .card:hover:not(.matched) {
+        transform: scale(1.05);
+      }
+
+      .card.flipped {
+        background: rgba(15, 23, 42, 0.9);
+        border-color: #6bcf7f;
+      }
+
+      .card.matched {
+        pointer-events: none;
+        opacity: 0.6;
+      }
+
+      .card-content {
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+
+      .card.flipped .card-content {
+        opacity: 1;
+      }
+
+      .controls {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 1.8rem;
+        }
+
+        .card {
+          font-size: 1.8rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🧠 Memory Match</h1>
+
+      <div class="stats">
+        <div class="stat">
+          <div>Moves</div>
+          <div id="moves">0</div>
+        </div>
+        <div class="stat">
+          <div>Matched</div>
+          <div id="matched">0</div>
+        </div>
+        <div class="stat">
+          <div>Time</div>
+          <div id="timer">0s</div>
+        </div>
+      </div>
+
+      <div class="difficulty-selector">
+        <button class="btn active" onclick="selectDifficulty(4, '4x4')">
+          4x4
+        </button>
+        <button class="btn" onclick="selectDifficulty(6, '3x2')">3x2</button>
+        <button class="btn" onclick="selectDifficulty(8, '4x2')">4x2</button>
+      </div>
+
+      <div class="game-board board-4" id="gameBoard"></div>
+
+      <div class="controls">
+        <button class="btn" onclick="resetGame()">New Game</button>
+        <button class="btn" onclick="goHome()">Back to Home</button>
+      </div>
+    </div>
+
+    <script>
+      const emojis = ["🎮", "🎯", "🎲", "🎸", "🎬", "🎨", "🎭", "🎪"];
+      let cards = [];
+      let flipped = [];
+      let matched = 0;
+      let moves = 0;
+      let gameActive = true;
+      let startTime = Date.now();
+      let timerInterval = null;
+      let difficulty = 4;
+
+      function selectDifficulty(num, label) {
+        difficulty = num;
+        document
+          .querySelectorAll(".difficulty-selector .btn")
+          .forEach((b) => b.classList.remove("active"));
+        event.target.classList.add("active");
+
+        const board = document.getElementById("gameBoard");
+        board.className = `game-board board-${num}`;
+        resetGame();
+      }
+
+      function initGame() {
+        const gameBoard = document.getElementById("gameBoard");
+        gameBoard.innerHTML = "";
+
+        const cardSet = emojis.slice(0, difficulty / 2);
+        cards = [...cardSet, ...cardSet].sort(() => Math.random() - 0.5);
+
+        cards.forEach((emoji, index) => {
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `<div class="card-content">${emoji}</div>`;
+          card.onclick = () => flipCard(index);
+          gameBoard.appendChild(card);
+        });
+
+        matched = 0;
+        moves = 0;
+        flipped = [];
+        gameActive = true;
+        startTime = Date.now();
+        updateStats();
+        startTimer();
+      }
+
+      function flipCard(index) {
+        if (!gameActive || flipped.includes(index) || flipped.length >= 2)
+          return;
+
+        flipped.push(index);
+        const cards_elements = document.querySelectorAll(".card");
+        cards_elements[index].classList.add("flipped");
+
+        if (flipped.length === 2) {
+          gameActive = false;
+          moves++;
+          updateStats();
+
+          setTimeout(() => {
+            if (cards[flipped[0]] === cards[flipped[1]]) {
+              cards_elements[flipped[0]].classList.add("matched");
+              cards_elements[flipped[1]].classList.add("matched");
+              matched++;
+              updateStats();
+
+              if (matched === difficulty / 2) {
+                endGame();
+              }
+            } else {
+              cards_elements[flipped[0]].classList.remove("flipped");
+              cards_elements[flipped[1]].classList.remove("flipped");
+            }
+
+            flipped = [];
+            gameActive = true;
+          }, 600);
+        }
+      }
+
+      function updateStats() {
+        document.getElementById("moves").textContent = moves;
+        document.getElementById("matched").textContent = matched;
+      }
+
+      function startTimer() {
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+          const elapsed = Math.floor((Date.now() - startTime) / 1000);
+          document.getElementById("timer").textContent = elapsed + "s";
+        }, 100);
+      }
+
+      function endGame() {
+        gameActive = false;
+        clearInterval(timerInterval);
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        alert(`🎉 You won! ${moves} moves in ${elapsed} seconds!`);
+      }
+
+      function resetGame() {
+        clearInterval(timerInterval);
+        initGame();
+      }
+
+      function goHome() {
+        clearInterval(timerInterval);
+        window.location.href = "/HELLO%20WORLD/index.html";
+      }
+
+      initGame();
+    </script>
+  </body>
+</html>

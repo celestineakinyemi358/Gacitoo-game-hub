@@ -1,0 +1,2271 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GACITOO Launcher</title>
+    <style>
+      :root {
+        --bg: #090c14;
+        --surface: rgba(10, 18, 34, 0.95);
+        --surface-strong: rgba(16, 26, 49, 0.99);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #38bdf8;
+        --accent-strong: #7c3aed;
+        --danger: #fb7185;
+        --success: #34d399;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: radial-gradient(circle at top left, #16213e, #090c14 45%);
+        color: var(--text);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      .navbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        backdrop-filter: blur(18px);
+        background: rgba(7, 15, 30, 0.88);
+        border-bottom: 1px solid rgba(56, 189, 248, 0.1);
+      }
+
+      .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      .logo {
+        font-size: 1.3rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .nav-link {
+        padding: 0.65rem 0.95rem;
+        border-radius: 999px;
+        transition: background 0.2s ease;
+        color: var(--muted);
+      }
+
+      .nav-link:hover,
+      .nav-link.active {
+        background: rgba(56, 189, 248, 0.14);
+        color: var(--text);
+      }
+
+      .hero {
+        padding: 4rem 1.5rem 2rem;
+      }
+
+      .hero-grid {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+        gap: 2rem;
+        align-items: center;
+      }
+
+      .hero-badge {
+        display: inline-flex;
+        gap: 0.5rem;
+        align-items: center;
+        background: rgba(56, 189, 248, 0.12);
+        color: var(--accent);
+        padding: 0.5rem 0.9rem;
+        border-radius: 999px;
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+      }
+
+      .hero h1 {
+        font-size: clamp(2.6rem, 4vw, 4.4rem);
+        line-height: 1.05;
+        max-width: 760px;
+      }
+
+      .hero p {
+        max-width: 720px;
+        margin: 1.5rem 0;
+        color: var(--muted);
+        line-height: 1.75;
+        font-size: 1.05rem;
+      }
+
+      .hero-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+      }
+
+      .hero-stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+      }
+
+      .hero-stat {
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(56, 189, 248, 0.12);
+        padding: 1rem 1.2rem;
+        border-radius: 1rem;
+        min-width: 130px;
+        text-align: center;
+      }
+
+      .hero-stat strong {
+        display: block;
+        font-size: 1.6rem;
+        margin-bottom: 0.35rem;
+      }
+
+      .preview-card {
+        border-radius: 1.5rem;
+        min-height: 320px;
+        background: linear-gradient(
+          160deg,
+          rgba(15, 23, 42, 0.96),
+          rgba(7, 15, 30, 0.94)
+        );
+        border: 1px solid rgba(56, 189, 248, 0.12);
+        padding: 2rem;
+        display: grid;
+        gap: 1rem;
+      }
+
+      .preview-card h2 {
+        margin: 0;
+        color: var(--accent);
+        font-size: 1.9rem;
+      }
+
+      .preview-card p {
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .section-heading {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .section-title {
+        display: block;
+        font-size: 2.5rem;
+        background: linear-gradient(135deg, #38bdf8, #7c3aed);
+        -webkit-background-clip: text;
+        color: transparent;
+        font-weight: 800;
+      }
+
+      .section-subtitle {
+        color: var(--muted);
+        margin-top: 0.85rem;
+        max-width: 760px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.7;
+      }
+
+      .games-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+      }
+
+      .game-card {
+        background: rgba(12, 20, 34, 0.95);
+        border: 1px solid rgba(56, 189, 248, 0.12);
+        border-radius: 1.8rem;
+        padding: 1.75rem;
+        display: grid;
+        gap: 1rem;
+        transition:
+          transform 0.25s ease,
+          box-shadow 0.25s ease;
+      }
+
+      .game-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.32);
+      }
+
+      .game-icon {
+        font-size: 3.8rem;
+      }
+
+      .game-card h3 {
+        margin: 0;
+        font-size: 1.5rem;
+      }
+
+      .game-card p {
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .uploader-section,
+      .leaderboard-section {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem 3rem;
+      }
+
+      .uploader-grid {
+        display: grid;
+        grid-template-columns: minmax(20px, 1fr) 1.4fr;
+        gap: 1.5rem;
+      }
+
+      .uploader-controls,
+      .uploader-preview,
+      .leaderboard,
+      .preview-card,
+      .game-card {
+        background: rgba(12, 20, 34, 0.95);
+      }
+
+      .uploader-controls {
+        border: 1px solid rgba(56, 189, 248, 0.14);
+        border-radius: 1.8rem;
+        padding: 1.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .uploader-controls label {
+        font-weight: 700;
+        color: var(--accent);
+      }
+
+      .uploader-controls input[type="url"],
+      .uploader-controls input[type="file"] {
+        width: 100%;
+        border-radius: 1rem;
+        border: 1px solid rgba(56, 189, 248, 0.18);
+        padding: 0.95rem 1rem;
+        background: rgba(15, 23, 42, 0.9);
+        color: var(--text);
+      }
+
+      .status {
+        color: var(--muted);
+        margin-top: 0.5rem;
+        min-height: 1.3rem;
+      }
+
+      .player-frame {
+        min-height: 460px;
+        border-radius: 1.5rem;
+        overflow: hidden;
+        border: 1px solid rgba(56, 189, 248, 0.14);
+      }
+
+      .player-frame iframe {
+        width: 100%;
+        height: 100%;
+        min-height: 590px;
+        border: none;
+        background: #090c14;
+      }
+
+      .player-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .leaderboard-container {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      .leaderboard {
+        border: 1px solid rgba(56, 189, 248, 0.14);
+        border-radius: 1.5rem;
+        padding: 1.75rem;
+      }
+
+      .leaderboard table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .leaderboard th,
+      .leaderboard td {
+        padding: 0.95rem 0.75rem;
+        color: var(--text);
+        text-align: left;
+      }
+
+      .leaderboard thead {
+        color: var(--accent);
+        border-bottom: 1px solid rgba(56, 189, 248, 0.14);
+      }
+
+      .leaderboard tbody tr:hover {
+        background: rgba(56, 189, 248, 0.08);
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.45rem;
+        border: none;
+        border-radius: 580px;
+        cursor: pointer;
+        padding: 0.9rem 1.4rem;
+        background: linear-gradient(
+          135deg,
+          var(--accent),
+          var(--accent-strong)
+        );
+        color: #000;
+        font-weight: 480;
+        transition:
+          transform 0.2s ease,
+          filter 0.2s ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .btn-secondary {
+        background: rgba(15, 23, 42, 0.96);
+        border: 1px solid rgba(56, 189, 248, 0.16);
+        color: var(--text);
+      }
+
+      .btn-secondary:hover {
+        filter: brightness(1.05);
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .game-shell {
+        position: fixed;
+        inset: 0;
+        background: rgba(4, 10, 22, 0.96);
+        z-index: 30;
+        overflow-y: auto;
+        padding: 1.5rem;
+      }
+
+      .game-shell-inner {
+        max-width: 500px;
+        margin: 0 auto;
+      }
+
+      .game-shell .game-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+      }
+
+      .game-shell .game-heading h1 {
+        margin: 0;
+        font-size: clamp(2rem, 3vw, 3rem);
+      }
+
+      .game-shell .game-heading p {
+        margin: 0.4rem 0 0;
+        color: var(--muted);
+        max-width: 400px;
+      }
+
+      .game-panel {
+        border-radius: 1.5rem;
+        padding: 1.5rem;
+        background: rgba(10, 18, 34, 0.96);
+        border: 1px solid rgba(56, 189, 248, 0.14);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+      }
+
+      .game-panel + .game-panel {
+        margin-top: 1.5rem;
+      }
+
+      .panel-snake {
+        background: linear-gradient(180deg, #071218, #0d1e35 45%, #07121f);
+        border-color: rgba(52, 211, 153, 0.22);
+      }
+
+      .panel-temple {
+        background: linear-gradient(180deg, #11232d, #0d1815 50%, #14120f);
+        border-color: rgba(103, 16, 29, 0.22);
+      }
+
+      .panel-tic {
+        background: linear-gradient(180deg, #1f1a11, #12100a 60%, #1f1a11);
+        border-color: rgba(248, 191, 63, 0.22);
+      }
+
+      .panel-memory {
+        background: linear-gradient(180deg, #141b24, #0c131b 60%, #141b24);
+        border-color: rgba(56, 189, 248, 0.22);
+      }
+
+      .game-stage {
+        display: grid;
+        gap: 1.25rem;
+      }
+
+      .game-stage canvas,
+      .game-stage .game-board,
+      .game-stage .board-grid {
+        width: 100%;
+        border-radius: 1.25rem;
+      }
+
+      .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 1rem;
+      }
+
+      .panel-card {
+        background: rgba(8, 15, 28, 0.9);
+        padding: 1rem;
+        border-radius: 1rem;
+        border: 1px solid rgba(56, 189, 248, 0.1);
+      }
+
+      .panel-card small {
+        display: block;
+        color: var(--muted);
+        margin-bottom: 0.35rem;
+      }
+
+      .panel-card strong {
+        display: block;
+        font-size: 1.5rem;
+      }
+
+      .game-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .control-label {
+        color: var(--muted);
+      }
+
+      .board-grid {
+        display: grid;
+        gap: 0.9rem;
+      }
+
+      .tic-board {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .tic-cell,
+      .memory-card {
+        aspect-ratio: 1 / 1;
+        border-radius: 1rem;
+        font-size: clamp(2rem, 3vw, 2.2rem);
+        font-weight: 700;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        transition:
+          transform 0.2s ease,
+          background 0.2s ease;
+        user-select: none;
+      }
+
+      .tic-cell {
+        background: radial-gradient(
+          circle at top left,
+          rgba(248, 191, 63, 0.16),
+          rgba(15, 12, 5, 0.95)
+        );
+        border: 2px solid rgba(248, 191, 63, 0.18);
+      }
+
+      .tic-cell:hover,
+      .memory-card:hover {
+        transform: translateY(-3px);
+      }
+
+      .tic-cell.x {
+        color: #fb7185;
+      }
+
+      .tic-cell.o {
+        color: #38bdf8;
+      }
+
+      .memory-card {
+        background: linear-gradient(
+          135deg,
+          rgba(56, 189, 248, 0.12),
+          rgba(15, 23, 42, 0.95)
+        );
+        border: 2px solid rgba(56, 189, 248, 0.16);
+        font-size: clamp(1.8rem, 3vw, 2rem);
+      }
+
+      .memory-card.flipped {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 209, 102, 0.16),
+          rgba(15, 23, 42, 0.95)
+        );
+        color: #f8fafc;
+      }
+
+      .memory-card.matched {
+        opacity: 0.5;
+        cursor: default;
+      }
+
+      .game-board.temple {
+        min-height: 220px;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(
+          180deg,
+          #061113 0%,
+          #0b1c1b 65%,
+          #0f1213 100%
+        );
+        border-radius: 1.5rem;
+        border: 1px solid rgba(56, 189, 248, 0.14);
+      }
+
+      .temple-player {
+        position: absolute;
+        width: 48px;
+        height: 48px;
+        border-radius: 1rem;
+        background: linear-gradient(180deg, #fb7185, #f97316);
+        display: grid;
+        place-items: center;
+        color: #111827;
+        font-size: 1.4rem;
+        z-index: 5;
+      }
+
+      .temple-obstacle {
+        position: absolute;
+        width: 52px;
+        height: 52px;
+        border-radius: 1rem;
+        background: linear-gradient(180deg, #f87171, #c2410c);
+        display: grid;
+        place-items: center;
+        font-size: 1.2rem;
+      }
+
+      .temple-coin {
+        position: absolute;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: radial-gradient(circle, #fde68a, #f59e0b);
+        display: grid;
+        place-items: center;
+        color: #111827;
+        font-size: 1rem;
+      }
+
+      .temple-screen {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        background: rgba(7, 12, 23, 0.82);
+        padding: 2rem;
+        text-align: center;
+        z-index: 10;
+      }
+
+      .temple-screen h2 {
+        margin: 0 0 0.8rem;
+        color: #facc15;
+        font-size: clamp(2rem, 3vw, 2.6rem);
+      }
+
+      .temple-screen p {
+        color: var(--muted);
+        line-height: 1.7;
+        margin-bottom: 1.4rem;
+      }
+
+      .game-board.shooter {
+        min-height: 320px;
+        position: relative;
+        overflow: hidden;
+        background:
+          radial-gradient(
+            circle at center,
+            rgba(56, 189, 248, 0.08),
+            transparent 25%
+          ),
+          linear-gradient(180deg, #02060f 0%, #07121c 100%);
+        border-radius: 1.5rem;
+        border: 1px solid rgba(56, 189, 248, 0.16);
+      }
+
+      .shooter-layer {
+        position: absolute;
+        inset: 0;
+      }
+
+      .shooter-crosshair {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 52px;
+        height: 52px;
+        transform: translate(-50%, -50%);
+        border: 2px solid rgba(56, 189, 248, 0.75);
+        border-radius: 50%;
+        pointer-events: none;
+      }
+
+      .shooter-crosshair::before,
+      .shooter-crosshair::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 100%;
+        height: 1px;
+        background: rgba(56, 189, 248, 0.75);
+        transform: translate(-50%, -50%);
+      }
+
+      .shooter-crosshair::after {
+        width: 1px;
+        height: 100%;
+      }
+
+      .shooter-player {
+        position: absolute;
+        left: 50%;
+        bottom: 14px;
+        width: 48px;
+        height: 48px;
+        transform: translateX(-50%);
+        border-radius: 0.9rem;
+        background: linear-gradient(180deg, #38bdf8, #0ea5e9);
+        display: grid;
+        place-items: center;
+        color: #000;
+        font-size: 1.25rem;
+        z-index: 10;
+      }
+
+      .shooter-enemy,
+      .shooter-bullet {
+        position: absolute;
+      }
+
+      .shooter-enemy {
+        width: 46px;
+        height: 46px;
+        border-radius: 0.9rem;
+        background: linear-gradient(180deg, #fb7185, #dc2626);
+        display: grid;
+        place-items: center;
+        color: #111827;
+        font-size: 1.1rem;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+      }
+
+      .shooter-bullet {
+        width: 6px;
+        height: 18px;
+        background: #38bdf8;
+        border-radius: 999px;
+      }
+
+      .shooter-control-note {
+        position: absolute;
+        bottom: 14px;
+        left: 14px;
+        right: 14px;
+        color: var(--muted);
+        font-size: 0.95rem;
+        text-align: center;
+        z-index: 8;
+        pointer-events: none;
+      }
+
+      .shooter-control-note p {
+        margin: 0;
+      }
+
+      .footer {
+        padding: 2rem 1.5rem 2.5rem;
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      @media (max-width: 940px) {
+        .hero-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .uploader-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .nav-container {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .game-shell {
+          padding: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="portal">
+      <nav class="navbar">
+        <div class="nav-container">
+          <div class="logo">🎮 GACITOO Launcher</div>
+          <div class="nav-links">
+            <a
+              href="#home"
+              class="nav-link active"
+              onclick="scrollToSection('#home')"
+              >Home</a
+            >
+            <a
+              href="#games"
+              class="nav-link"
+              onclick="scrollToSection('#games')"
+              >Games</a
+            >
+            <a
+              href="#leaderboard"
+              class="nav-link"
+              onclick="scrollToSection('#leaderboard')"
+              >Leaderboard</a
+            >
+            <a
+              href="#uploader"
+              class="nav-link"
+              onclick="scrollToSection('#uploader')"
+              >Upload</a
+            >
+          </div>
+        </div>
+      </nav>
+
+      <section id="home" class="hero">
+        <div class="hero-grid">
+          <div>
+            <span class="hero-badge">Launcher Mode</span>
+            <h1>
+              Realistic game presentation with classic, standard, and
+              adventurous style.
+            </h1>
+            <p>
+              Every built-in game now has its own visual mood and theme, while
+              the portal remains one single file for easy maintenance and fast
+              loading.
+            </p>
+            <div class="hero-actions">
+              <button
+                class="btn btn-primary"
+                onclick="scrollToSection('#games')"
+              >
+                Browse Games
+              </button>
+              <button
+                class="btn btn-secondary"
+                onclick="scrollToSection('#uploader')"
+              >
+                Upload Any Game
+              </button>
+            </div>
+            <div class="hero-stats">
+              <div class="hero-stat">
+                <strong>4</strong><span>Games in one file</span>
+              </div>
+              <div class="hero-stat">
+                <strong>1</strong><span>Main launcher</span>
+              </div>
+              <div class="hero-stat">
+                <strong>Instant</strong><span>Responsive UI</span>
+              </div>
+            </div>
+          </div>
+          <div class="preview-card">
+            <h2>Unified Portal</h2>
+            <p>
+              All game logic, UI, and upload support lives inside this page. The
+              launcher now feels more polished, and each game carries a distinct
+              classic or adventurous atmosphere.
+            </p>
+            <button
+              class="btn btn-secondary"
+              onclick="scrollToSection('#games')"
+            >
+              Start Playing
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section id="games" class="games-section">
+        <div class="section-heading">
+          <span class="section-title">Game Library</span>
+          <p class="section-subtitle">
+            Choose a game with realistic visuals and a crisp launcher-style
+            interface.
+          </p>
+        </div>
+        <div class="games-grid">
+          <div class="game-card">
+            <div class="game-icon">🏃</div>
+            <h3>Temple Run</h3>
+            <p>
+              An adventurous runner with jungle-inspired colors and a responsive
+              motion field.
+            </p>
+            <button class="btn btn-secondary" onclick="showGamePanel('temple')">
+              Play Now
+            </button>
+          </div>
+          <div class="game-card">
+            <div class="game-icon">🎯</div>
+            <h3>Tic Tac Toe</h3>
+            <p>
+              A classic board experience with polished tiles, crisp lines, and
+              strategic pacing.
+            </p>
+            <button class="btn btn-secondary" onclick="showGamePanel('tic')">
+              Play Now
+            </button>
+          </div>
+          <div class="game-card">
+            <div class="game-icon">🧠</div>
+            <h3>Memory Match</h3>
+            <p>
+              A standard card memory challenge with clean animations and
+              thoughtful game feedback.
+            </p>
+            <button class="btn btn-secondary" onclick="showGamePanel('memory')">
+              Play Now
+            </button>
+          </div>
+          <div class="game-card">
+            <div class="game-icon">🐍</div>
+            <h3>Snake</h3>
+            <p>
+              A classic arcade snake game with neon retro styling and smooth
+              responsive controls.
+            </p>
+            <button class="btn btn-secondary" onclick="showGamePanel('snake')">
+              Play Now
+            </button>
+          </div>
+          <div class="game-card">
+            <div class="game-icon">🔫</div>
+            <h3>Battle Ops</h3>
+            <p>
+              A compact FPS-style shooter with moving enemies, ammo, and reload.
+            </p>
+            <button
+              class="btn btn-secondary"
+              onclick="showGamePanel('shooter')"
+            >
+              Play Now
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section id="uploader" class="uploader-section">
+        <div class="section-heading">
+          <span class="section-title">Upload Any Game</span>
+          <p class="section-subtitle">
+            Load custom HTML or ZIP games in the same launcher experience. Drag,
+            drop, or paste a URL to preview instantly.
+          </p>
+        </div>
+        <div class="uploader-grid">
+          <div class="uploader-controls">
+            <label>Embed from URL</label>
+            <input
+              id="embed-url"
+              type="url"
+              placeholder="https://example.com/game"
+            />
+            <button class="btn btn-secondary" id="embed-button">
+              Embed URL
+            </button>
+            <hr />
+            <label>Upload .html or .zip</label>
+            <input id="game-file" type="file" accept=".html,.htm,.zip" />
+            <button class="btn btn-primary" id="upload-button">
+              Load Uploaded Game
+            </button>
+            <div id="uploader-status" class="status">
+              Drop a .zip or .html file here, or paste a URL.
+            </div>
+          </div>
+          <div class="uploader-preview">
+            <div class="player-toolbar">
+              <span id="player-title">No game loaded</span>
+              <button class="btn btn-secondary" id="open-in-new">
+                Open in New Tab
+              </button>
+            </div>
+            <div class="player-frame">
+              <iframe
+                id="game-frame"
+                sandbox="allow-scripts allow-same-origin allow-forms"
+                srcdoc=""
+                title="Game Player"
+              ></iframe>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="leaderboard" class="leaderboard-section">
+        <div class="section-heading">
+          <span class="section-title">Leaderboard</span>
+          <p class="section-subtitle">
+            Track your best scores and compare performance across the launcher.
+          </p>
+        </div>
+        <div class="leaderboard-container">
+          <div class="leaderboard">
+            <h3>Top Scores</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Game</th>
+                  <th>Score</th>
+                  <th>Difficulty</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboard-body">
+                <tr>
+                  <td colspan="4">No scores yet. Play to appear here!</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div id="game-shell" class="game-shell hidden">
+      <div class="game-shell-inner">
+        <div class="game-heading">
+          <div>
+            <h1 id="game-title">Game</h1>
+            <p id="game-subtitle">Experience the current game.</p>
+          </div>
+          <button class="btn btn-secondary" onclick="closeGamePanel()">
+            ← Back to Launcher
+          </button>
+        </div>
+
+        <div id="snake-panel" class="game-panel panel-snake hidden">
+          <div class="game-stage">
+            <div class="stats-row">
+              <div class="panel-card">
+                <small>Score</small><strong id="snake-score">0</strong>
+              </div>
+              <div class="panel-card">
+                <small>High Score</small><strong id="snake-high">0</strong>
+              </div>
+              <div class="panel-card">
+                <small>Movement</small><strong>Arrow keys</strong>
+              </div>
+            </div>
+            <canvas id="snakeCanvas" width="420" height="420"></canvas>
+            <div class="game-controls">
+              <button class="btn btn-secondary" id="snake-start">
+                New Game
+              </button>
+              <button class="btn btn-secondary" id="snake-pause">Pause</button>
+              <span class="control-label">Press Space to pause/resume.</span>
+            </div>
+            <div class="panel-card">
+              <small>Theme</small><strong>Classic arcade neon</strong>
+            </div>
+          </div>
+        </div>
+
+        <div id="temple-panel" class="game-panel panel-temple hidden">
+          <div class="game-stage">
+            <div class="stats-row">
+              <div class="panel-card">
+                <small>Score</small><strong id="temple-score">0</strong>
+              </div>
+              <div class="panel-card">
+                <small>Coins</small><strong id="temple-coins">0</strong>
+              </div>
+              <div class="panel-card">
+                <small>Time</small><strong id="temple-time">0s</strong>
+              </div>
+            </div>
+            <div class="game-controls">
+              <button class="btn btn-secondary" data-difficulty="easy">
+                Easy
+              </button>
+              <button class="btn btn-secondary" data-difficulty="normal">
+                Normal
+              </button>
+              <button class="btn btn-secondary" data-difficulty="hard">
+                Hard
+              </button>
+              <button class="btn btn-secondary" id="temple-start">
+                Start Run
+              </button>
+              <button class="btn btn-secondary hidden" id="temple-pause">
+                Pause
+              </button>
+            </div>
+            <div class="game-board temple" id="templeBoard">
+              <div class="temple-screen" id="temple-start-screen">
+                <h2>Temple Adventure</h2>
+                <p>
+                  Run, dodge, and collect coins in an adventurous jungle lane.
+                </p>
+                <button class="btn" id="temple-start-screen-btn">
+                  Start Run
+                </button>
+              </div>
+              <div class="temple-screen hidden" id="temple-over-screen">
+                <h2>Game Over</h2>
+                <p id="temple-over-text"></p>
+                <button class="btn" id="temple-restart">Play Again</button>
+              </div>
+              <div class="temple-player" id="temple-player">🏃</div>
+            </div>
+            <div class="panel-card">
+              <small>Theme</small><strong>Adventurous jungle</strong>
+            </div>
+          </div>
+        </div>
+
+        <div id="shooter-panel" class="game-panel panel-shooter hidden">
+          <div class="game-stage">
+            <div class="stats-row">
+              <div class="panel-card">
+                <small>Score</small><strong id="shooter-score">0</strong>
+              </div>
+              <div class="panel-card">
+                <small>Ammo</small><strong id="shooter-ammo">0</strong>
+              </div>
+              <div class="panel-card">
+                <small>Health</small><strong id="shooter-health">0</strong>
+              </div>
+            </div>
+            <div class="game-controls">
+              <button class="btn btn-secondary" data-shooter-difficulty="easy">
+                Easy
+              </button>
+              <button
+                class="btn btn-secondary"
+                data-shooter-difficulty="normal"
+              >
+                Normal
+              </button>
+              <button class="btn btn-secondary" data-shooter-difficulty="hard">
+                Hard
+              </button>
+              <button class="btn btn-secondary" id="shooter-start">
+                Start Mission
+              </button>
+              <button class="btn btn-secondary hidden" id="shooter-pause">
+                Pause
+              </button>
+            </div>
+            <div class="game-board shooter" id="shooterBoard">
+              <div class="shooter-layer" id="shooterLayer"></div>
+              <div class="shooter-crosshair"></div>
+              <div class="shooter-control-note">
+                <p>
+                  Use A/D or ←/→ to move aim. Press Space or click to shoot.
+                  Press R to reload.
+                </p>
+              </div>
+            </div>
+            <div class="panel-card">
+              <small>Theme</small><strong>FPS-style target combat</strong>
+            </div>
+          </div>
+        </div>
+
+        <div id="tic-panel" class="game-panel panel-tic hidden">
+          <div class="game-stage">
+            <div class="stats-row">
+              <div class="panel-card">
+                <small>Mode</small><strong id="tic-mode-label">Vs AI</strong>
+              </div>
+              <div class="panel-card">
+                <small>Status</small><strong id="tic-status">Your turn</strong>
+              </div>
+              <div class="panel-card">
+                <small>Moves</small><strong id="tic-moves">0</strong>
+              </div>
+            </div>
+            <div class="game-controls">
+              <button
+                class="btn btn-secondary"
+                onclick="selectTicMode('ai', this)"
+              >
+                Vs AI
+              </button>
+              <button
+                class="btn btn-secondary"
+                onclick="selectTicMode('2player', this)"
+              >
+                2 Player
+              </button>
+              <button class="btn btn-secondary" onclick="resetTic()">
+                Restart
+              </button>
+            </div>
+            <div class="board-grid tic-board" id="ticBoard"></div>
+            <div class="panel-card">
+              <small>Theme</small><strong>Classic board</strong>
+            </div>
+          </div>
+        </div>
+
+        <div id="memory-panel" class="game-panel panel-memory hidden">
+          <div class="game-stage">
+            <div class="stats-row">
+              <div class="panel-card">
+                <small>Moves</small><strong id="memory-moves">0</strong>
+              </div>
+              <div class="panel-card">
+                <small>Matched</small><strong id="memory-matched">0</strong>
+              </div>
+              <div class="panel-card">
+                <small>Time</small><strong id="memory-timer">0s</strong>
+              </div>
+            </div>
+            <div class="game-controls">
+              <button class="btn btn-secondary" onclick="resetMemory()">
+                New Game
+              </button>
+              <span class="control-label"
+                >Tap or click cards to reveal them. Match all pairs.</span
+              >
+            </div>
+            <div class="board-grid tic-board" id="memoryBoard"></div>
+            <div class="panel-card">
+              <small>Theme</small><strong>Standard card game</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+    <script>
+      const portal = document.getElementById("portal");
+      const shell = document.getElementById("game-shell");
+      const gameTitle = document.getElementById("game-title");
+      const gameSubtitle = document.getElementById("game-subtitle");
+      const panels = {
+        snake: document.getElementById("snake-panel"),
+        temple: document.getElementById("temple-panel"),
+        tic: document.getElementById("tic-panel"),
+        memory: document.getElementById("memory-panel"),
+        shooter: document.getElementById("shooter-panel"),
+      };
+      let currentGame = "";
+
+      function hideAllPanels() {
+        Object.values(panels).forEach((panel) => panel.classList.add("hidden"));
+      }
+
+      function showGamePanel(name) {
+        portal.classList.add("hidden");
+        shell.classList.remove("hidden");
+        hideAllPanels();
+        const panel = panels[name];
+        if (!panel) return;
+        panel.classList.remove("hidden");
+        if (name === "snake") {
+          gameTitle.textContent = "Snake";
+          gameSubtitle.textContent = "Classic neon arcade snake gameplay.";
+          initSnake();
+        }
+        if (name === "temple") {
+          gameTitle.textContent = "Temple Run";
+          gameSubtitle.textContent =
+            "An adventurous jungle runner with fast pacing.";
+          initTemple();
+        }
+        if (name === "tic") {
+          gameTitle.textContent = "Tic Tac Toe";
+          gameSubtitle.textContent =
+            "Classic strategy board with polished tiles.";
+          initTic();
+        }
+        if (name === "memory") {
+          gameTitle.textContent = "Memory Match";
+          gameSubtitle.textContent =
+            "Standard memory challenge with card flip style.";
+          initMemory();
+        }
+        if (name === "shooter") {
+          gameTitle.textContent = "Battle Ops";
+          gameSubtitle.textContent =
+            "FPS-style target combat with moving enemies.";
+          initShooter();
+        }
+        currentGame = name;
+      }
+
+      function closeGamePanel() {
+        shell.classList.add("hidden");
+        portal.classList.remove("hidden");
+        currentGame = "";
+      }
+
+      function scrollToSection(id) {
+        const element = document.querySelector(id);
+        if (element) element.scrollIntoView({ behavior: "smooth" });
+      }
+
+      document.addEventListener(
+        "scroll",
+        () => {
+          const sections = ["#home", "#games", "#leaderboard", "#uploader"];
+          let activeId = "#home";
+          sections.forEach((id) => {
+            const section = document.querySelector(id);
+            if (section && section.getBoundingClientRect().top <= 100)
+              activeId = id;
+          });
+          document.querySelectorAll(".nav-link").forEach((link) => {
+            link.classList.toggle(
+              "active",
+              link.getAttribute("href") === activeId,
+            );
+          });
+        },
+        { passive: true },
+      );
+
+      function loadLeaderboard() {
+        const leaderboard = JSON.parse(
+          localStorage.getItem("leaderboard") || "[]",
+        );
+        const body = document.getElementById("leaderboard-body");
+        if (!leaderboard.length) {
+          body.innerHTML =
+            '<tr><td colspan="4">No scores yet. Play to appear here!</td></tr>';
+          return;
+        }
+        body.innerHTML = "";
+        leaderboard.slice(0, 10).forEach((entry, index) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `<td>#${index + 1}</td><td>${entry.game}</td><td>${entry.score}</td><td>${entry.difficulty || "—"}</td>`;
+          body.appendChild(row);
+        });
+      }
+
+      window.addEventListener("DOMContentLoaded", loadLeaderboard);
+
+      function saveScore(game, score, difficulty, coins) {
+        const leaderboard = JSON.parse(
+          localStorage.getItem("leaderboard") || "[]",
+        );
+        leaderboard.push({
+          game,
+          score,
+          difficulty,
+          coins,
+          date: new Date().toLocaleDateString(),
+        });
+        leaderboard.sort((a, b) => b.score - a.score);
+        localStorage.setItem(
+          "leaderboard",
+          JSON.stringify(leaderboard.slice(0, 100)),
+        );
+        loadLeaderboard();
+      }
+
+      const uploaderState = {
+        iframe: null,
+        title: null,
+        openBtn: null,
+        input: null,
+        embedUrl: null,
+        status: null,
+      };
+
+      function setStatus(text, isError) {
+        uploaderState.status.textContent = text;
+        uploaderState.status.style.color = isError ? "#fb7185" : "";
+      }
+
+      function setUploadedFrame(html, title) {
+        uploaderState.iframe.srcdoc = html;
+        uploaderState.iframe.removeAttribute("src");
+        uploaderState.title.textContent = title || "Uploaded Game";
+        uploaderState.openBtn.onclick = () => {
+          const blob = new Blob([html], { type: "text/html" });
+          window.open(URL.createObjectURL(blob), "_blank");
+        };
+      }
+
+      function getExtension(filename) {
+        const parts = filename.split(".");
+        return parts.length > 1 ? parts.pop().toLowerCase() : "";
+      }
+
+      async function handleHtmlFile(file) {
+        const html = await file.text();
+        setUploadedFrame(html, file.name);
+        setStatus("Loaded HTML file: " + file.name);
+      }
+
+      async function handleZipFile(file) {
+        if (typeof JSZip === "undefined") {
+          setStatus("JSZip not loaded", true);
+          return;
+        }
+        setStatus("Unzipping...");
+        try {
+          const zip = await JSZip.loadAsync(file);
+          const entries = Object.keys(zip.files).filter(
+            (name) => !zip.files[name].dir,
+          );
+          const blobMap = {};
+          await Promise.all(
+            entries.map(async (name) => {
+              const zf = zip.file(name);
+              if (!zf) return;
+              const data = await zf.async("uint8array");
+              const ext = getExtension(name);
+              const type =
+                {
+                  html: "text/html",
+                  htm: "text/html",
+                  js: "application/javascript",
+                  css: "text/css",
+                  png: "image/png",
+                  jpg: "image/jpeg",
+                  jpeg: "image/jpeg",
+                  gif: "image/gif",
+                  svg: "image/svg+xml",
+                  json: "application/json",
+                  txt: "text/plain",
+                }[ext] || "application/octet-stream";
+              blobMap[name.replace(/^\/+/, "")] = URL.createObjectURL(
+                new Blob([data], { type }),
+              );
+            }),
+          );
+          let entryName = entries.find((name) => /index\.html?$/i.test(name));
+          if (!entryName)
+            entryName = entries.find((name) => /\.html?$/i.test(name));
+          if (!entryName) {
+            setStatus("No HTML entry found inside zip.", true);
+            return;
+          }
+          let html = await zip.file(entryName).async("string");
+          Object.keys(blobMap).forEach((name) => {
+            const safe = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            html = html.replace(
+              new RegExp(`(["'\(])${safe}(["'\)])`, "g"),
+              `$1${blobMap[name]}$2`,
+            );
+          });
+          setUploadedFrame(html, entryName);
+          setStatus("Loaded zip game: " + file.name);
+        } catch (err) {
+          setStatus("Zip load failed: " + err.message, true);
+        }
+      }
+
+      function setupUploader() {
+        uploaderState.iframe = document.getElementById("game-frame");
+        uploaderState.title = document.getElementById("player-title");
+        uploaderState.openBtn = document.getElementById("open-in-new");
+        uploaderState.input = document.getElementById("game-file");
+        uploaderState.embedUrl = document.getElementById("embed-url");
+        uploaderState.status = document.getElementById("uploader-status");
+        document
+          .getElementById("embed-button")
+          .addEventListener("click", () => {
+            const url = uploaderState.embedUrl.value.trim();
+            if (!url) return setStatus("Enter a valid URL", true);
+            uploaderState.iframe.srcdoc = "";
+            uploaderState.iframe.src = url;
+            uploaderState.title.textContent = url;
+            setStatus("Embedding: " + url);
+          });
+        document
+          .getElementById("upload-button")
+          .addEventListener("click", async () => {
+            const file = uploaderState.input.files?.[0];
+            if (!file) return setStatus("Select a file first", true);
+            if (file.name.toLowerCase().endsWith(".zip"))
+              await handleZipFile(file);
+            else if (
+              file.name.toLowerCase().endsWith(".html") ||
+              file.name.toLowerCase().endsWith(".htm")
+            )
+              await handleHtmlFile(file);
+            else setStatus("Unsupported file type", true);
+          });
+        const controls = document.querySelector(".uploader-controls");
+        controls.addEventListener("dragover", (event) => {
+          event.preventDefault();
+          controls.classList.add("dragover");
+        });
+        controls.addEventListener("dragleave", () =>
+          controls.classList.remove("dragover"),
+        );
+        controls.addEventListener("drop", async (event) => {
+          event.preventDefault();
+          controls.classList.remove("dragover");
+          const file = event.dataTransfer.files?.[0];
+          if (!file) return;
+          uploaderState.input.files = event.dataTransfer.files;
+          if (file.name.toLowerCase().endsWith(".zip"))
+            await handleZipFile(file);
+          else if (
+            file.name.toLowerCase().endsWith(".html") ||
+            file.name.toLowerCase().endsWith(".htm")
+          )
+            await handleHtmlFile(file);
+          else setStatus("Unsupported file type", true);
+        });
+      }
+
+      const snake = {
+        canvas: null,
+        ctx: null,
+        size: 20,
+        tile: 25,
+        snake: [{ x: 10, y: 10 }],
+        food: { x: 15, y: 15 },
+        direction: { x: 1, y: 0 },
+        nextDirection: { x: 1, y: 0 },
+        score: 0,
+        highScore: 0,
+        running: false,
+        paused: false,
+        difficulty: "normal",
+        speeds: { easy: 140, normal: 95, hard: 60 },
+      };
+
+      function initSnake() {
+        snake.canvas = document.getElementById("snakeCanvas");
+        snake.ctx = snake.canvas.getContext("2d");
+        snake.highScore = Number(localStorage.getItem("snakeHighScore") || 0);
+        document.getElementById("snake-high").textContent = snake.highScore;
+        document.getElementById("snake-start").onclick = startSnake;
+        document.getElementById("snake-pause").onclick = toggleSnakePause;
+        drawSnake();
+      }
+
+      function drawSnake() {
+        const ctx = snake.ctx;
+        ctx.fillStyle = "#071218";
+        ctx.fillRect(0, 0, snake.canvas.width, snake.canvas.height);
+        ctx.strokeStyle = "rgba(56, 128, 160, 0.12)";
+        for (let i = 0; i <= snake.size; i++) {
+          ctx.beginPath();
+          ctx.moveTo(i * snake.tile, 0);
+          ctx.lineTo(i * snake.tile, snake.canvas.height);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(0, i * snake.tile);
+          ctx.lineTo(snake.canvas.width, i * snake.tile);
+          ctx.stroke();
+        }
+        snake.snake.forEach((segment, index) => {
+          ctx.fillStyle = index === 0 ? "#6ee7b7" : "rgba(76, 190, 132, 0.75)";
+          ctx.fillRect(
+            segment.x * snake.tile + 1,
+            segment.y * snake.tile + 1,
+            snake.tile - 2,
+            snake.tile - 2,
+          );
+        });
+        ctx.fillStyle = "#fde68a";
+        ctx.beginPath();
+        ctx.arc(
+          (snake.food.x + 0.5) * snake.tile,
+          (snake.food.y + 0.5) * snake.tile,
+          snake.tile / 2 - 2,
+          0,
+          Math.PI * 2,
+        );
+        ctx.fill();
+      }
+
+      function updateSnake() {
+        if (!snake.running || snake.paused) return;
+        snake.direction = snake.nextDirection;
+        const head = {
+          x: snake.snake[0].x + snake.direction.x,
+          y: snake.snake[0].y + snake.direction.y,
+        };
+        if (
+          head.x < 0 ||
+          head.x >= snake.size ||
+          head.y < 0 ||
+          head.y >= snake.size ||
+          snake.snake.some(
+            (segment) => segment.x === head.x && segment.y === head.y,
+          )
+        ) {
+          return endSnake();
+        }
+        snake.snake.unshift(head);
+        if (head.x === snake.food.x && head.y === snake.food.y) {
+          snake.score += 10;
+          document.getElementById("snake-score").textContent = snake.score;
+          spawnSnakeFood();
+        } else {
+          snake.snake.pop();
+        }
+        drawSnake();
+      }
+
+      function spawnSnakeFood() {
+        let position;
+        do {
+          position = {
+            x: Math.floor(Math.random() * snake.size),
+            y: Math.floor(Math.random() * snake.size),
+          };
+        } while (
+          snake.snake.some(
+            (segment) => segment.x === position.x && segment.y === position.y,
+          )
+        );
+        snake.food = position;
+      }
+
+      function snakeLoop() {
+        if (!snake.running) return;
+        updateSnake();
+        if (snake.running)
+          setTimeout(snakeLoop, snake.speeds[snake.difficulty]);
+      }
+
+      function startSnake() {
+        snake.running = true;
+        snake.paused = false;
+        snake.score = 0;
+        snake.snake = [{ x: 10, y: 10 }];
+        snake.direction = { x: 1, y: 0 };
+        snake.nextDirection = { x: 1, y: 0 };
+        spawnSnakeFood();
+        document.getElementById("snake-score").textContent = 0;
+        document.getElementById("snake-pause").textContent = "Pause";
+        snakeLoop();
+      }
+
+      function endSnake() {
+        snake.running = false;
+        if (snake.score > snake.highScore) {
+          snake.highScore = snake.score;
+          localStorage.setItem("snakeHighScore", String(snake.highScore));
+          document.getElementById("snake-high").textContent = snake.highScore;
+        }
+        setTimeout(() => alert(`Game Over! Score: ${snake.score}`), 100);
+      }
+
+      function toggleSnakePause() {
+        if (!snake.running) return;
+        snake.paused = !snake.paused;
+        document.getElementById("snake-pause").textContent = snake.paused
+          ? "Resume"
+          : "Pause";
+      }
+
+      window.addEventListener("keydown", (event) => {
+        const key = event.key.toLowerCase();
+        if (["arrowup", "w"].includes(key) && snake.direction.y === 0)
+          snake.nextDirection = { x: 0, y: -1 };
+        if (["arrowdown", "s"].includes(key) && snake.direction.y === 0)
+          snake.nextDirection = { x: 0, y: 1 };
+        if (["arrowleft", "a"].includes(key) && snake.direction.x === 0)
+          snake.nextDirection = { x: -1, y: 0 };
+        if (["arrowright", "d"].includes(key) && snake.direction.x === 0)
+          snake.nextDirection = { x: 1, y: 0 };
+        if (key === " " && shell.classList.contains("hidden")) return;
+        if (key === " " && panels.snake && !snake.running) startSnake();
+        if (key === " " && snake.running) toggleSnakePause();
+      });
+
+      const temple = {
+        board: document.getElementById("templeBoard"),
+        player: document.getElementById("temple-player"),
+        startScreen: document.getElementById("temple-start-screen"),
+        overScreen: document.getElementById("temple-over-screen"),
+        score: 0,
+        coins: 0,
+        time: 0,
+        objects: [],
+        active: false,
+        paused: false,
+        lastFrame: 0,
+        settings: {
+          easy: { speed: 220, spawnRate: 0.016 },
+          normal: { speed: 280, spawnRate: 0.024 },
+          hard: { speed: 340, spawnRate: 0.032 },
+        },
+        difficulty: "easy",
+        controls: { left: false, right: false },
+      };
+
+      function initTemple() {
+        document.getElementById("temple-start").onclick = startTemple;
+        document.getElementById("temple-start-screen-btn").onclick =
+          startTemple;
+        document.getElementById("temple-restart").onclick = startTemple;
+        document.getElementById("temple-pause").onclick = toggleTemplePause;
+        document
+          .querySelectorAll("#temple-panel [data-difficulty]")
+          .forEach((button) => {
+            button.addEventListener("click", () => {
+              selectTempleDifficulty(button.dataset.difficulty, button);
+            });
+          });
+        resetTemple();
+      }
+
+      function updateTempleHud() {
+        document.getElementById("temple-score").textContent = Math.floor(
+          temple.score,
+        );
+        document.getElementById("temple-coins").textContent = temple.coins;
+        document.getElementById("temple-time").textContent =
+          Math.floor(temple.time) + "s";
+      }
+
+      function resetTemple() {
+        temple.objects.forEach((obj) => obj.element.remove());
+        temple.objects = [];
+        temple.score = 0;
+        temple.coins = 0;
+        temple.time = 0;
+        temple.active = false;
+        temple.paused = false;
+        temple.player.style.left = "calc(50% - 24px)";
+        temple.player.style.top = temple.board.clientHeight - 70 + "px";
+        temple.startScreen.classList.remove("hidden");
+        temple.overScreen.classList.add("hidden");
+        document.getElementById("temple-pause").classList.add("hidden");
+        updateTempleHud();
+      }
+
+      function startTemple() {
+        resetTemple();
+        temple.active = true;
+        temple.startScreen.classList.add("hidden");
+        document.getElementById("temple-pause").classList.remove("hidden");
+        temple.lastFrame = performance.now();
+        requestAnimationFrame(templeLoop);
+      }
+
+      function selectTempleDifficulty(level, button) {
+        temple.difficulty = level;
+        document
+          .querySelectorAll("#temple-panel [data-difficulty]")
+          .forEach((btn) => btn.classList.remove("active"));
+        if (button) button.classList.add("active");
+      }
+
+      function spawnTempleObject(type) {
+        const element = document.createElement("div");
+        element.className = type === "coin" ? "temple-coin" : "temple-obstacle";
+        const x = Math.random() * (temple.board.clientWidth - 60);
+        element.style.left = x + "px";
+        element.style.top = "-80px";
+        element.textContent = type === "coin" ? "💰" : "⚠";
+        temple.board.appendChild(element);
+        temple.objects.push({
+          element,
+          x,
+          y: -80,
+          type,
+          speed: temple.settings[temple.difficulty].speed,
+          width: type === "coin" ? 32 : 52,
+          height: type === "coin" ? 32 : 52,
+        });
+      }
+
+      function templeLoop(timestamp) {
+        if (!temple.active) return;
+        if (temple.paused) {
+          temple.lastFrame = timestamp;
+          requestAnimationFrame(templeLoop);
+          return;
+        }
+        const delta = timestamp - temple.lastFrame;
+        temple.lastFrame = timestamp;
+        temple.time += delta / 1000;
+        if (Math.random() < temple.settings[temple.difficulty].spawnRate) {
+          spawnTempleObject(Math.random() < 0.35 ? "coin" : "obstacle");
+        }
+        temple.objects = temple.objects.filter((obj) => {
+          obj.y += (obj.speed * delta) / 1000;
+          obj.element.style.top = obj.y + "px";
+          if (obj.y > temple.board.clientHeight + 80) {
+            obj.element.remove();
+            return false;
+          }
+          return true;
+        });
+        const left = parseFloat(temple.player.style.left);
+        if (temple.controls.left) {
+          temple.player.style.left = Math.max(0, left - 4) + "px";
+        }
+        if (temple.controls.right) {
+          temple.player.style.left =
+            Math.min(temple.board.clientWidth - 48, left + 4) + "px";
+        }
+        const playerRect = temple.player.getBoundingClientRect();
+        temple.objects.forEach((obj) => {
+          const rect = obj.element.getBoundingClientRect();
+          if (
+            rect.left < playerRect.right &&
+            rect.right > playerRect.left &&
+            rect.top < playerRect.bottom &&
+            rect.bottom > playerRect.top
+          ) {
+            if (obj.type === "obstacle") endTemple();
+            else {
+              temple.coins += 1;
+              temple.score += 40;
+              obj.element.remove();
+              temple.objects = temple.objects.filter((item) => item !== obj);
+            }
+          }
+        });
+        temple.score += delta * 0.01;
+        updateTempleHud();
+        if (temple.active) requestAnimationFrame(templeLoop);
+      }
+
+      function endTemple() {
+        temple.active = false;
+        document.getElementById("temple-over-text").textContent =
+          `Score: ${Math.floor(temple.score)}, Coins: ${temple.coins}`;
+        temple.overScreen.classList.remove("hidden");
+        document.getElementById("temple-pause").classList.add("hidden");
+        saveScore(
+          "Temple Run",
+          Math.floor(temple.score),
+          temple.difficulty,
+          temple.coins,
+        );
+      }
+
+      function toggleTemplePause() {
+        if (!temple.active) return;
+        temple.paused = !temple.paused;
+        document.getElementById("temple-pause").textContent = temple.paused
+          ? "Resume"
+          : "Pause";
+      }
+
+      window.addEventListener("keydown", (event) => {
+        const key = event.key.toLowerCase();
+        if (["arrowleft", "a"].includes(key)) temple.controls.left = true;
+        if (["arrowright", "d"].includes(key)) temple.controls.right = true;
+      });
+
+      window.addEventListener("keyup", (event) => {
+        const key = event.key.toLowerCase();
+        if (["arrowleft", "a"].includes(key)) temple.controls.left = false;
+        if (["arrowright", "d"].includes(key)) temple.controls.right = false;
+      });
+
+      const tic = {
+        board: Array(9).fill(""),
+        current: "X",
+        mode: "ai",
+        active: true,
+        moves: 0,
+        cells: null,
+      };
+
+      function initTic() {
+        tic.cells = document.getElementById("ticBoard");
+        tic.cells.innerHTML = "";
+        for (let i = 0; i < 9; i++) {
+          const cell = document.createElement("button");
+          cell.className = "tic-cell";
+          cell.onclick = () => makeTicMove(i);
+          tic.cells.appendChild(cell);
+        }
+        resetTic();
+      }
+
+      function selectTicMode(mode, button) {
+        tic.mode = mode;
+        tic.current = "X";
+        tic.active = true;
+        document.getElementById("tic-mode-label").textContent =
+          mode === "ai" ? "Vs AI" : "2 Player";
+        document
+          .querySelectorAll("#tic-panel .game-controls .btn")
+          .forEach((btn) => btn.classList.remove("active"));
+        if (button) button.classList.add("active");
+        resetTic();
+      }
+
+      function updateTicStatus() {
+        document.getElementById("tic-status").textContent = tic.active
+          ? `${tic.current}'s turn`
+          : "Game over";
+        document.getElementById("tic-moves").textContent = tic.moves;
+      }
+
+      function makeTicMove(index) {
+        if (!tic.active || tic.board[index]) return;
+        tic.board[index] = tic.current;
+        tic.cells.children[index].textContent = tic.current;
+        tic.cells.children[index].classList.add(tic.current.toLowerCase());
+        tic.moves += 1;
+        if (checkTicWinner()) {
+          tic.active = false;
+          document.getElementById("tic-status").textContent =
+            `${tic.current} wins!`;
+          return;
+        }
+        if (tic.board.every((value) => value)) {
+          tic.active = false;
+          document.getElementById("tic-status").textContent = `Draw!`;
+          return;
+        }
+        tic.current = tic.current === "X" ? "O" : "X";
+        updateTicStatus();
+        if (tic.mode === "ai" && tic.current === "O" && tic.active) {
+          setTimeout(aiTicMove, 260);
+        }
+      }
+
+      function aiTicMove() {
+        const available = tic.board
+          .map((v, i) => (v === "" ? i : null))
+          .filter((i) => i !== null);
+        const choice = available[Math.floor(Math.random() * available.length)];
+        if (choice !== undefined) makeTicMove(choice);
+      }
+
+      function checkTicWinner() {
+        const combos = [
+          [0, 1, 2],
+          [3, 4, 5],
+          [6, 7, 8],
+          [0, 3, 6],
+          [1, 4, 7],
+          [2, 5, 8],
+          [0, 4, 8],
+          [2, 4, 6],
+        ];
+        return combos.some(
+          ([a, b, c]) =>
+            tic.board[a] &&
+            tic.board[a] === tic.board[b] &&
+            tic.board[a] === tic.board[c],
+        );
+      }
+
+      function resetTic() {
+        tic.board.fill("");
+        tic.current = "X";
+        tic.active = true;
+        tic.moves = 0;
+        if (tic.cells)
+          Array.from(tic.cells.children).forEach((cell) => {
+            cell.textContent = "";
+            cell.className = "tic-cell";
+          });
+        updateTicStatus();
+      }
+
+      const memory = {
+        board: document.getElementById("memoryBoard"),
+        cards: [],
+        flipped: [],
+        matched: 0,
+        moves: 0,
+        active: true,
+        timer: null,
+        startTime: 0,
+      };
+
+      function initMemory() {
+        memory.board.innerHTML = "";
+        resetMemory();
+      }
+
+      function createMemoryCard(value, index) {
+        const card = document.createElement("div");
+        card.className = "memory-card";
+        card.onclick = () => flipMemoryCard(index);
+        memory.board.appendChild(card);
+        return card;
+      }
+
+      function resetMemory() {
+        const emojis = ["🎮", "🎯", "🎲", "🎸", "🎬", "🎨", "🎭", "🎪"];
+        memory.cards = [...emojis.slice(0, 6), ...emojis.slice(0, 6)].sort(
+          () => Math.random() - 0.5,
+        );
+        memory.board.innerHTML = "";
+        memory.cards.forEach((value, index) => createMemoryCard(value, index));
+        memory.flipped = [];
+        memory.matched = 0;
+        memory.moves = 0;
+        memory.active = true;
+        memory.startTime = Date.now();
+        clearInterval(memory.timer);
+        memory.timer = setInterval(() => {
+          document.getElementById("memory-timer").textContent =
+            Math.floor((Date.now() - memory.startTime) / 1000) + "s";
+        }, 250);
+        updateMemoryStats();
+      }
+
+      function flipMemoryCard(index) {
+        if (
+          !memory.active ||
+          memory.flipped.includes(index) ||
+          memory.board.children[index].classList.contains("matched")
+        )
+          return;
+        const card = memory.board.children[index];
+        card.classList.add("flipped");
+        card.textContent = memory.cards[index];
+        memory.flipped.push(index);
+        if (memory.flipped.length === 2) {
+          memory.moves += 1;
+          updateMemoryStats();
+          setTimeout(() => {
+            const [a, b] = memory.flipped;
+            if (memory.cards[a] === memory.cards[b]) {
+              memory.board.children[a].classList.add("matched");
+              memory.board.children[b].classList.add("matched");
+              memory.matched += 1;
+            } else {
+              memory.board.children[a].classList.remove("flipped");
+              memory.board.children[b].classList.remove("flipped");
+              memory.board.children[a].textContent = "";
+              memory.board.children[b].textContent = "";
+            }
+            memory.flipped = [];
+            if (memory.matched === 6) endMemory();
+          }, 600);
+        }
+      }
+
+      function updateMemoryStats() {
+        document.getElementById("memory-moves").textContent = memory.moves;
+        document.getElementById("memory-matched").textContent = memory.matched;
+      }
+
+      function endMemory() {
+        memory.active = false;
+        clearInterval(memory.timer);
+        setTimeout(
+          () => alert(`You matched all cards in ${memory.moves} moves!`),
+          100,
+        );
+      }
+
+      // --- Shooter game implementation ---
+      const shooter = {
+        board: document.getElementById("shooterBoard"),
+        layer: document.getElementById("shooterLayer"),
+        crosshair: document.querySelector(".shooter-crosshair"),
+        score: 0,
+        ammo: 12,
+        maxAmmo: 12,
+        health: 3,
+        enemies: [10],
+        bullets: [5],
+        active: false,
+        paused: false,
+        lastFrame: 0,
+        aimX: 0,
+        settings: {
+          easy: { spawnRate: 0.008, speed: 60 },
+          normal: { spawnRate: 0.016, speed: 100 },
+          hard: { spawnRate: 0.03, speed: 150 },
+        },
+        difficulty: "normal",
+      };
+
+      function initShooter() {
+        document
+          .querySelectorAll("#shooter-panel [data-shooter-difficulty]")
+          .forEach((btn) => {
+            btn.addEventListener("click", () => {
+              shooter.difficulty = btn.dataset.shooterDifficulty;
+              document
+                .querySelectorAll("#shooter-panel [data-shooter-difficulty]")
+                .forEach((b) => b.classList.remove("active"));
+              btn.classList.add("active");
+            });
+          });
+        document.getElementById("shooter-start").onclick = startShooter;
+        document.getElementById("shooter-pause").onclick = toggleShooterPause;
+        shooter.board.addEventListener("mousemove", (e) => {
+          const r = shooter.board.getBoundingClientRect();
+          shooter.aimX = Math.max(8, Math.min(r.width - 8, e.clientX - r.left));
+          if (shooter.crosshair)
+            shooter.crosshair.style.left = shooter.aimX + "px";
+        });
+        shooter.board.addEventListener("click", (e) => {
+          if (!shooter.active || shooter.paused) return;
+          shootBullet();
+        });
+        window.addEventListener("keydown", (e) => {
+          if (!shooter.active) return;
+          if (e.key.toLowerCase() === "r") reloadShooter();
+        });
+        resetShooter();
+      }
+
+      function resetShooter() {
+        shooter.enemies.forEach((o) => o.element.remove());
+        shooter.bullets.forEach((b) => b.element.remove());
+        shooter.enemies = [];
+        shooter.bullets = [];
+        shooter.score = 0;
+        shooter.ammo = shooter.maxAmmo;
+        shooter.health = 3;
+        shooter.active = false;
+        shooter.paused = false;
+        if (shooter.crosshair) shooter.crosshair.style.left = "50%";
+        updateShooterHud();
+      }
+
+      function startShooter() {
+        resetShooter();
+        shooter.active = true;
+        shooter.lastFrame = performance.now();
+        document.getElementById("shooter-pause").classList.remove("hidden");
+        shooter.layer.innerHTML = "";
+        requestAnimationFrame(shooterLoop);
+      }
+
+      function toggleShooterPause() {
+        if (!shooter.active) return;
+        shooter.paused = !shooter.paused;
+        document.getElementById("shooter-pause").textContent = shooter.paused
+          ? "Resume"
+          : "Pause";
+      }
+
+      function shooterLoop(ts) {
+        if (!shooter.active) return;
+        const delta = ts - shooter.lastFrame;
+        shooter.lastFrame = ts;
+        if (!shooter.paused) {
+          // spawn enemies
+          if (Math.random() < shooter.settings[shooter.difficulty].spawnRate)
+            spawnEnemy();
+
+          // update enemies
+          shooter.enemies = shooter.enemies.filter((en) => {
+            en.y += (shooter.settings[shooter.difficulty].speed * delta) / 1000;
+            en.element.style.top = en.y + "px";
+            if (en.y > shooter.board.clientHeight - 30) {
+              // enemy passed player
+              en.element.remove();
+              shooter.health -= 1;
+              return false;
+            }
+            return true;
+          });
+
+          // update bullets
+          shooter.bullets = shooter.bullets.filter((b) => {
+            b.y -= (600 * delta) / 1000;
+            b.element.style.top = b.y + "px";
+            if (b.y < -20) {
+              b.element.remove();
+              return false;
+            }
+            return true;
+          });
+
+          // collisions
+          shooter.bullets.forEach((b) => {
+            shooter.enemies.forEach((en) => {
+              if (rectsIntersect(b, en)) {
+                // remove enemy and bullet
+                en.element.remove();
+                b.element.remove();
+                en._dead = true;
+                b._dead = true;
+                shooter.score += 100;
+              }
+            });
+          });
+          shooter.enemies = shooter.enemies.filter((e) => !e._dead);
+          shooter.bullets = shooter.bullets.filter((b) => !b._dead);
+
+          if (shooter.health <= 0) return endShooter();
+          updateShooterHud();
+        }
+        requestAnimationFrame(shooterLoop);
+      }
+
+      function spawnEnemy() {
+        const el = document.createElement("div");
+        el.className = "shooter-enemy";
+        const x = Math.random() * (shooter.board.clientWidth - 46);
+        el.style.left = x + "px";
+        el.style.top = "-60px";
+        el.textContent = "👾";
+        shooter.layer.appendChild(el);
+        shooter.enemies.push({ element: el, x, y: -60, width: 46, height: 46 });
+      }
+
+      function shootBullet() {
+        if (shooter.ammo <= 0) return; // no ammo
+        shooter.ammo -= 1;
+        const el = document.createElement("div");
+        el.className = "shooter-bullet";
+        const boardRect = shooter.board.getBoundingClientRect();
+        const startX = shooter.aimX || boardRect.width / 2;
+        const startY = boardRect.height - 40;
+        el.style.left = startX - 6 / 2 + "px";
+        el.style.top = startY + "px";
+        shooter.layer.appendChild(el);
+        shooter.bullets.push({
+          element: el,
+          x: startX,
+          y: startY,
+          width: 6,
+          height: 18,
+        });
+        updateShooterHud();
+      }
+
+      function reloadShooter() {
+        shooter.ammo = shooter.maxAmmo;
+        updateShooterHud();
+      }
+
+      function updateShooterHud() {
+        document.getElementById("shooter-score").textContent = Math.floor(
+          shooter.score,
+        );
+        document.getElementById("shooter-ammo").textContent =
+          `${shooter.ammo}/${shooter.maxAmmo}`;
+        document.getElementById("shooter-health").textContent = shooter.health;
+      }
+
+      function rectsIntersect(a, b) {
+        const ax = a.element
+          ? a.element.getBoundingClientRect()
+          : {
+              left: a.x,
+              top: a.y,
+              right: a.x + a.width,
+              bottom: a.y + a.height,
+            };
+        const bx = b.element
+          ? b.element.getBoundingClientRect()
+          : {
+              left: b.x,
+              top: b.y,
+              right: b.x + b.width,
+              bottom: b.y + b.height,
+            };
+        return !(
+          bx.left > ax.right ||
+          bx.right < ax.left ||
+          bx.top > ax.bottom ||
+          bx.bottom < ax.top
+        );
+      }
+
+      function endShooter() {
+        shooter.active = false;
+        document.getElementById("shooter-pause").classList.add("hidden");
+        alert(`Mission complete! Score: ${Math.floor(shooter.score)}`);
+        saveScore(
+          "Battle Ops",
+          Math.floor(shooter.score),
+          shooter.difficulty,
+          0,
+        );
+      }
+
+      // Wire up when page loads
+      document.addEventListener("DOMContentLoaded", setupUploader);
+      window.addEventListener("load", () => {
+        document
+          .querySelectorAll("#tic-panel .btn")[0]
+          ?.classList.add("active");
+        selectTicMode("ai");
+        loadLeaderboard();
+      });
+    </script>
+  </body>
+</html>
